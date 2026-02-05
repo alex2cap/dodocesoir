@@ -14,19 +14,33 @@ export default function ProviderLogin() {
 
   // ── Étape 1 : envoyer le code OTP ───────────────────────
   async function sendOtp() {
-    setLoading(true)
-    setError("")
-    const { error: err } = await supabase.auth.signInWithOtp({
-      email,
-      options: { shouldCreateUser: false }, // seuls les hébergeurs pré-enregistrés
-    })
+  setLoading(true)
+  setError("")
+  
+  // Vérifier si l'email existe dans accommodations
+  const { data: accommodation } = await supabase
+    .from("accommodations")
+    .select("email")
+    .eq("email", email.trim().toLowerCase())
+    .single()
+  
+  if (!accommodation) {
+    setError(t("provider.login.error_email"))
     setLoading(false)
-    if (err) {
-      setError(t("provider.login.error_email"))
-    } else {
-      setStep("otp")
-    }
+    return
   }
+  
+  const { error: err } = await supabase.auth.signInWithOtp({
+    email: email.trim().toLowerCase(),
+    options: { shouldCreateUser: true },
+  })
+  setLoading(false)
+  if (err) {
+    setError(t("provider.login.error_email"))
+  } else {
+    setStep("otp")
+  }
+}
 
   // ── Étape 2 : vérifier le code ──────────────────────────
   async function verifyOtp() {
