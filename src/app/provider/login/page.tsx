@@ -17,31 +17,43 @@ export default function ProviderLogin() {
   setLoading(true)
   setError("")
   
+  const normalizedEmail = email.trim().toLowerCase()
+  console.log("🔍 Email normalisé:", normalizedEmail)
+  
   // Vérifier si l'email existe dans accommodations
-  const { data: accommodation } = await supabase
+  const { data: accommodation, error: dbError } = await supabase
     .from("accommodations")
     .select("email")
-    .eq("email", email.trim().toLowerCase())
+    .eq("email", normalizedEmail)
     .single()
   
+  console.log("📊 Résultat DB:", { accommodation, dbError })
+  
   if (!accommodation) {
+    console.error("❌ Email non trouvé dans accommodations")
     setError(t("provider.login.error_email"))
     setLoading(false)
     return
   }
   
+  console.log("✅ Email trouvé, envoi OTP...")
+  
   const { error: err } = await supabase.auth.signInWithOtp({
-    email: email.trim().toLowerCase(),
+    email: normalizedEmail,
     options: { shouldCreateUser: true },
   })
+  
+  console.log("📧 Résultat OTP:", { error: err })
+  
   setLoading(false)
   if (err) {
+    console.error("❌ Erreur OTP:", err)
     setError(t("provider.login.error_email"))
   } else {
+    console.log("✅ Code envoyé")
     setStep("otp")
   }
 }
-
   // ── Étape 2 : vérifier le code ──────────────────────────
   async function verifyOtp() {
     setLoading(true)
