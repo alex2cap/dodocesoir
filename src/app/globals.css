@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Leaflet — rompre les styles par défaut sur mobile */
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+}
+.leaflet-popup-content-wrapper {
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.leaflet-popup-tip-container { display: none; }
