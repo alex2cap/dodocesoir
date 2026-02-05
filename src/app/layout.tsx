@@ -4,7 +4,7 @@ import "./globals.css"
 import { I18nProvider } from "@/i18n/provider"
 
 export const metadata: Metadata = {
-  name: "Dodocesoir",
+  title: "Dodocesoir",
   description: "Hébergements sur le Chemin de Santiago — Le Puy → Conques",
 }
 
